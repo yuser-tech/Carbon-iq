@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root {
+  --background: #081C15; /* Deep Eco Black */
+  --foreground: #F5FFF5; /* Eco White/Text */
+  
+  --forest-green: #0B3D2E;
+  --emerald-green: #1B5E20;
+  --moss-green: #4CAF50;
+  --sage-green: #A5D6A7;
+  --eco-gold: #C9A227;
+  --card-bg: #0F2E22;
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-forest: var(--forest-green);
+  --color-emerald: var(--emerald-green);
+  --color-moss: var(--moss-green);
+  --color-sage: var(--sage-green);
+  --color-gold: var(--eco-gold);
+  --color-card: var(--card-bg);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Utilities */
+@utility glass {
+  background: rgba(15, 46, 34, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(165, 214, 167, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+@utility glass-border {
+  border: 1px solid rgba(165, 214, 167, 0.2);
+}
+
+@utility glass-card {
+  background: rgba(15, 46, 34, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(165, 214, 167, 0.1);
+  border-radius: var(--radius-xl);
+  transition: all 0.3s ease;
+}
+
+@utility glass-card-hover {
+  background: rgba(27, 94, 32, 0.4);
+  border: 1px solid rgba(165, 214, 167, 0.3);
+  transform: translateY(-2px);
+}
+
+@utility text-gradient {
+  background: linear-gradient(to right, #A5D6A7, #4CAF50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility bg-eco-gradient {
+  background: radial-gradient(circle at center, #1B5E20 0%, #081C15 100%);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(165, 214, 167, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(165, 214, 167, 0.2);
+}
