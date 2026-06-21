@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { calculateStreak } from '@/lib/streaks';
 import { checkNewBadges } from '@/lib/badges';
 
@@ -41,6 +41,30 @@ interface EcoState {
   checkAchievements: () => void;
   resetData: () => void;
 }
+
+const CARBONIQ_STORAGE_KEY = 'carboniq-eco-storage';
+const LEGACY_GREENPULSE_STORAGE_KEY = 'greenpulse-eco-storage';
+
+const getCarbonIQStorage = () => ({
+  getItem: (name: string) => {
+    const value = localStorage.getItem(name);
+
+    if (value !== null || name !== CARBONIQ_STORAGE_KEY) {
+      return value;
+    }
+
+    const legacyValue = localStorage.getItem(LEGACY_GREENPULSE_STORAGE_KEY);
+
+    if (legacyValue !== null) {
+      localStorage.setItem(CARBONIQ_STORAGE_KEY, legacyValue);
+      localStorage.removeItem(LEGACY_GREENPULSE_STORAGE_KEY);
+    }
+
+    return legacyValue;
+  },
+  setItem: (name: string, value: string) => localStorage.setItem(name, value),
+  removeItem: (name: string) => localStorage.removeItem(name),
+});
 
 const initialUserData: UserData = {
   onboarded: false,
@@ -120,7 +144,8 @@ export const useEcoStore = create<EcoState>()(
       resetData: () => set({ user: initialUserData }),
     }),
     {
-      name: 'greenpulse-eco-storage',
+      name: CARBONIQ_STORAGE_KEY,
+      storage: createJSONStorage(getCarbonIQStorage),
     }
   )
 );

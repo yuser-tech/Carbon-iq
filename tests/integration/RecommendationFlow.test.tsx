@@ -23,6 +23,6 @@ describe('Recommendation Flow Integration', () => {
     
     render(<DashboardPage />);
     
-    expect(screen.getByText(/I'm your GreenPulse AI Coach/)).toBeInTheDocument();
+    expect(screen.getByText(/I'm your CarbonIQ AI Coach/)).toBeInTheDocument();
   });
 });

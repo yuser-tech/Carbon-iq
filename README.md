@@ -1,6 +1,6 @@
-# GreenPulse AI 🌿
+# CarbonIQ AI 🌿
 
-**GreenPulse AI** is a premium, AI-powered Carbon Footprint Awareness Platform designed to help individuals understand, track, and reduce their environmental impact.
+**CarbonIQ AI** is a premium, AI-powered Carbon Footprint Awareness Platform designed to help individuals understand, track, and reduce their environmental impact.
 
 Built with **Next.js 15**, **TypeScript**, and **Gemini AI**, it offers a seamless and visually stunning experience for sustainability advocates.
 
@@ -26,7 +26,7 @@ Built with **Next.js 15**, **TypeScript**, and **Gemini AI**, it offers a seamle
 
 ## 🛠️ Setup Instructions
 
-1. **Clone the repository** (or copy the `greenpulse-ai` folder).
+1. **Clone the repository** (or copy the `carboniq-ai` folder).
 2. **Install dependencies**:
    ```bash
    npm install
