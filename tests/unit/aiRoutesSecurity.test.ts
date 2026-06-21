@@ -35,11 +35,13 @@ describe('AI route security', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetRateLimiterForTests();
+    process.env.GEMINI_API_KEY = 'gemini-test-key';
     process.env.RECAPTCHA_SECRET_KEY = 'server-only-secret';
     mockRecaptcha(true);
   });
 
   afterEach(() => {
+    delete process.env.GEMINI_API_KEY;
     delete process.env.RECAPTCHA_SECRET_KEY;
   });
 

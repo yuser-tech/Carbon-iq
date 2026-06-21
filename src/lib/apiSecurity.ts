@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { serverEnv } from './env';
 
 const GENERIC_ERROR = 'Unable to process request right now';
 const MAX_TEXT_LENGTH = 2_000;
@@ -98,8 +99,7 @@ export function checkRateLimit(req: Request, route: string, now = Date.now()) {
 }
 
 export async function verifyRecaptcha(token: string, remoteIp: string) {
-  const secret = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secret) return false;
+  const secret = serverEnv.RECAPTCHA_SECRET_KEY;
 
   try {
     const params = new URLSearchParams({ secret, response: token });
