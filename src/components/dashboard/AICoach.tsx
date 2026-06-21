@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Bot, User } from 'lucide-react';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 type ApiMessageRole = 'user' | 'assistant' | 'system';
 
@@ -11,61 +12,8 @@ type ChatMessage = {
   content: string;
 };
 
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (callback: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
-  }
-}
-
-const recaptchaScriptId = 'google-recaptcha-v3';
-const tokenErrorMessage = 'Unable to verify this chat request. Please try again.';
-
-function getRecaptchaSiteKey() {
-  return process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-}
-
 function getMessageTone(role: ApiMessageRole) {
   return role === 'assistant' ? 'model' : role;
-}
-
-function loadRecaptchaScript(siteKey: string) {
-  if (typeof window === 'undefined') return Promise.reject(new Error('Browser unavailable'));
-  if (window.grecaptcha) return Promise.resolve();
-
-  const existingScript = document.getElementById(recaptchaScriptId) as HTMLScriptElement | null;
-  if (existingScript) {
-    return new Promise<void>((resolve, reject) => {
-      existingScript.addEventListener('load', () => resolve(), { once: true });
-      existingScript.addEventListener('error', () => reject(new Error('reCAPTCHA script failed to load')), { once: true });
-    });
-  }
-
-  return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script');
-    script.id = recaptchaScriptId;
-    script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
-    script.async = true;
-    script.defer = true;
-    script.addEventListener('load', () => resolve(), { once: true });
-    script.addEventListener('error', () => reject(new Error('reCAPTCHA script failed to load')), { once: true });
-    document.head.appendChild(script);
-  });
-}
-
-async function getRecaptchaToken(siteKey: string) {
-  await loadRecaptchaScript(siteKey);
-
-  return new Promise<string>((resolve, reject) => {
-    window.grecaptcha?.ready(() => {
-      window.grecaptcha
-        ?.execute(siteKey, { action: 'chat' })
-        .then(resolve)
-        .catch(() => reject(new Error(tokenErrorMessage)));
-    });
-  });
 }
 
 export default function AICoach({ userData }: { userData: unknown }) {
@@ -77,17 +25,11 @@ export default function AICoach({ userData }: { userData: unknown }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { executeRecaptcha, errorMessage: recaptchaErrorMessage, status: recaptchaStatus } = useRecaptcha();
 
   const sendMessage = async () => {
     const trimmedInput = input.trim();
-    if (!trimmedInput || loading) return;
-
-    const recaptchaSiteKey = getRecaptchaSiteKey();
-
-    if (!recaptchaSiteKey) {
-      setErrorMessage('Chat verification is not configured. Please set NEXT_PUBLIC_RECAPTCHA_SITE_KEY and try again.');
-      return;
-    }
+    if (!trimmedInput || loading || recaptchaStatus === 'loading') return;
 
     const userMsg: ChatMessage = { role: 'user', content: trimmedInput };
     const history = messages.map((message) => ({
@@ -101,9 +43,9 @@ export default function AICoach({ userData }: { userData: unknown }) {
     setErrorMessage(null);
 
     try {
-      const recaptchaToken = await getRecaptchaToken(recaptchaSiteKey);
+      const recaptchaToken = await executeRecaptcha('chat');
       if (!recaptchaToken) {
-        throw new Error(tokenErrorMessage);
+        return;
       }
 
       const res = await fetch('/api/chat', {
@@ -123,8 +65,8 @@ export default function AICoach({ userData }: { userData: unknown }) {
 
       const data = (await res.json()) as { response?: string };
       setMessages(prev => [...prev, { role: 'assistant', content: data.response || "I'm having trouble responding right now. Try again soon!" }]);
-    } catch (error) {
-      setErrorMessage(error instanceof Error && error.message === tokenErrorMessage ? error.message : "I'm having trouble connecting right now. Try again soon!");
+    } catch {
+      setErrorMessage("I'm having trouble connecting right now. Try again soon!");
     } finally {
       setLoading(false);
     }
@@ -177,9 +119,9 @@ export default function AICoach({ userData }: { userData: unknown }) {
       </div>
 
       <div className="p-4 border-t border-white/10 bg-black/20">
-        {errorMessage && (
-          <div className="mb-3 rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-100" role="alert">
-            {errorMessage}
+        {(errorMessage || recaptchaErrorMessage) && (
+          <div id="ai-coach-error" className="mb-3 rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-100" role="alert">
+            {errorMessage || recaptchaErrorMessage}
           </div>
         )}
         <div className="relative">
@@ -192,7 +134,8 @@ export default function AICoach({ userData }: { userData: unknown }) {
           />
           <button
             onClick={sendMessage}
-            disabled={loading}
+            disabled={loading || recaptchaStatus === 'loading'}
+            aria-describedby={errorMessage || recaptchaErrorMessage ? 'ai-coach-error' : undefined}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-emerald rounded-lg hover:bg-emerald-600 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send className="w-4 h-4" />
