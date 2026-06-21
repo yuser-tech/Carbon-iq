@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { serverEnv } from './env';
+export { sanitizeText } from './sanitize';
 
 const GENERIC_ERROR = 'Unable to process request right now';
 const MAX_TEXT_LENGTH = 2_000;
@@ -58,13 +59,6 @@ export const suggestionsPayloadSchema = z
   })
   .strict();
 
-export function sanitizeText(value: string) {
-  return value
-    .replace(/[\u0000-\u001F\u007F]/g, ' ')
-    .replace(/[<>]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
 
 export function genericErrorResponse(status = 500) {
   return Response.json({ error: GENERIC_ERROR }, { status });
