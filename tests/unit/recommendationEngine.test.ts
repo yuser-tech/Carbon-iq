@@ -28,6 +28,16 @@ jest.mock('@google/generative-ai', () => {
 });
 
 describe('Recommendation Engine', () => {
+  beforeEach(() => {
+    process.env.GEMINI_API_KEY = 'gemini-test-key';
+    process.env.RECAPTCHA_SECRET_KEY = 'recaptcha-test-secret';
+  });
+
+  afterEach(() => {
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.RECAPTCHA_SECRET_KEY;
+  });
+
   const mockUserData = {
     score: 10,
     breakdown: { transport: 4, energy: 3, diet: 2, shopping: 1 }

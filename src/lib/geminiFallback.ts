@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { serverEnv } from "./env";
 
 export const GEMINI_FALLBACK_MODELS = [
   "gemini-2.5-flash",
@@ -27,7 +28,7 @@ type GeminiFallbackOptions = {
 };
 
 const defaultModelFactory: ModelFactory = (modelName) => {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+  const genAI = new GoogleGenerativeAI(serverEnv.GEMINI_API_KEY);
   return genAI.getGenerativeModel({ model: modelName });
 };
 
