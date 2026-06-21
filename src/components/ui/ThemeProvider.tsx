@@ -100,12 +100,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 }
 
 /**
+ * Default theme context value for SSR/safety
+ */
+const defaultContextValue: ThemeContextValue = {
+  theme: 'dark',
+  toggleTheme: () => {},
+  setTheme: () => {},
+  isDark: true,
+};
+
+/**
  * Hook to access theme context
+ * Returns default value if used outside provider (SSR safety)
  */
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    return defaultContextValue;
   }
   return context;
 }
