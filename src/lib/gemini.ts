@@ -5,7 +5,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export const generateSustainabilityAdvice = async (userData: any) => {
   const prompt = `
-    As a Sustainability Coach for GreenPulse AI, analyze this user's carbon footprint and provide 3 actionable, personalized recommendations.
+    As a Sustainability Coach for CarbonIQ AI, analyze this user's carbon footprint and provide 3 actionable, personalized recommendations.
     
     User Carbon Footprint: ${userData.score} tons CO2/year.
     Breakdown: 

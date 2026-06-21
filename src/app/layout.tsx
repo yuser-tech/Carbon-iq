@@ -6,8 +6,8 @@ import Navbar from "@/components/layout/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GreenPulse AI | Carbon Footprint Awareness",
-  description: "Understand, track, and reduce your carbon footprint with AI.",
+  title: "CarbonIQ AI | Carbon Footprint Intelligence",
+  description: "Understand, track, and reduce your carbon footprint with CarbonIQ AI.",
 };
 
 export default function RootLayout({

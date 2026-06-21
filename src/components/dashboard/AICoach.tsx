@@ -6,7 +6,7 @@ import { Sparkles, Send, Bot, User } from 'lucide-react';
 
 export default function AICoach({ userData }: { userData: any }) {
   const [messages, setMessages] = useState<any[]>([
-    { role: 'model', content: "Hello! I'm your GreenPulse AI Coach. How can I help you reduce your footprint today?" }
+    { role: 'model', content: "Hello! I'm your CarbonIQ AI Coach. How can I help you reduce your footprint today?" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
