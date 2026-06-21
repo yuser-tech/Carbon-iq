@@ -6,6 +6,13 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
+jest.mock('@/components/ui/ThemeProvider', () => ({
+  useTheme: () => ({
+    theme: 'dark',
+    toggleTheme: jest.fn(),
+  }),
+}));
+
 describe('Navbar Component', () => {
   test('renders navigation items on dashboard', () => {
     (usePathname as jest.Mock).mockReturnValue('/dashboard');

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play, RotateCcw, TrendingDown, Info } from 'lucide-react';
+import { useState } from 'react';
+import { Play, RotateCcw } from 'lucide-react';
 import { useEcoStore } from '@/store/useEcoStore';
 
 export default function CarbonSimulator() {

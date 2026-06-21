@@ -4,8 +4,11 @@ export interface EcoAction {
   description: string;
   category: 'transport' | 'energy' | 'diet' | 'shopping';
   impact: 'High' | 'Medium' | 'Low';
-  co2Saving: number; // tons per year
+  co2Saving: number;
   xpReward: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  timeRequired: string;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'one-time';
 }
 
 export const ECO_ACTIONS: EcoAction[] = [
@@ -17,6 +20,9 @@ export const ECO_ACTIONS: EcoAction[] = [
     impact: 'Low',
     co2Saving: 0.1,
     xpReward: 150,
+    difficulty: 'Easy',
+    timeRequired: '30 mins',
+    frequency: 'one-time',
   },
   {
     id: 'meatless-mondays',
@@ -26,6 +32,9 @@ export const ECO_ACTIONS: EcoAction[] = [
     impact: 'Medium',
     co2Saving: 0.5,
     xpReward: 300,
+    difficulty: 'Medium',
+    timeRequired: 'Ongoing',
+    frequency: 'weekly',
   },
   {
     id: 'public-transport',
@@ -35,6 +44,9 @@ export const ECO_ACTIONS: EcoAction[] = [
     impact: 'High',
     co2Saving: 1.2,
     xpReward: 500,
+    difficulty: 'Medium',
+    timeRequired: '2 hrs/week',
+    frequency: 'daily',
   },
   {
     id: 'cold-wash',
@@ -44,6 +56,9 @@ export const ECO_ACTIONS: EcoAction[] = [
     impact: 'Low',
     co2Saving: 0.05,
     xpReward: 100,
+    difficulty: 'Easy',
+    timeRequired: '5 mins',
+    frequency: 'daily',
   },
   {
     id: 'second-hand',
@@ -53,5 +68,8 @@ export const ECO_ACTIONS: EcoAction[] = [
     impact: 'Medium',
     co2Saving: 0.3,
     xpReward: 400,
+    difficulty: 'Medium',
+    timeRequired: 'Varies',
+    frequency: 'monthly',
   },
 ];

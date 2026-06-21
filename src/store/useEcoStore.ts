@@ -2,26 +2,19 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { calculateStreak } from '@/lib/streaks';
 import { checkNewBadges } from '@/lib/badges';
+import type { Goal, Habit, Milestone, Theme, EmissionBreakdown } from '@/types';
 
-export interface Goal {
-  id: string;
-  title: string;
-  target: number;
-  current: number;
-  type: 'reduction' | 'habit';
-  unit: string;
+export interface HistoryEntry {
+  date: string;
+  score: number;
+  breakdown: EmissionBreakdown;
 }
 
 export interface UserData {
   onboarded: boolean;
   score: number;
-  breakdown: {
-    transport: number;
-    energy: number;
-    diet: number;
-    shopping: number;
-  };
-  history: { date: string; score: number }[];
+  breakdown: EmissionBreakdown;
+  history: HistoryEntry[];
   goals: Goal[];
   completedActions: string[];
   badges: string[];
@@ -29,6 +22,9 @@ export interface UserData {
   level: number;
   streak: number;
   lastUpdate: string;
+  theme: Theme;
+  habits: Habit[];
+  milestones: Milestone[];
 }
 
 interface EcoState {
@@ -40,6 +36,9 @@ interface EcoState {
   updateGoalProgress: (goalId: string, amount: number) => void;
   checkAchievements: () => void;
   resetData: () => void;
+  setTheme: (theme: Theme) => void;
+  addHabitCompletion: (habitId: string, date: string) => void;
+  addMilestone: (milestone: Milestone) => void;
 }
 
 const CARBONIQ_STORAGE_KEY = 'carboniq-eco-storage';
@@ -83,6 +82,9 @@ const initialUserData: UserData = {
   level: 1,
   streak: 0,
   lastUpdate: new Date().toISOString(),
+  theme: 'dark',
+  habits: [],
+  milestones: [],
 };
 
 export const useEcoStore = create<EcoState>()(
@@ -142,6 +144,25 @@ export const useEcoStore = create<EcoState>()(
         }
       },
       resetData: () => set({ user: initialUserData }),
+      setTheme: (theme) =>
+        set((state) => ({
+          user: { ...state.user, theme },
+        })),
+      addHabitCompletion: (habitId, date) =>
+        set((state) => ({
+          user: {
+            ...state.user,
+            habits: state.user.habits.map(h =>
+              h.id === habitId && !h.completedDates.includes(date)
+                ? { ...h, completedDates: [...h.completedDates, date] }
+                : h
+            ),
+          },
+        })),
+      addMilestone: (milestone) =>
+        set((state) => ({
+          user: { ...state.user, milestones: [...state.user.milestones, milestone] },
+        })),
     }),
     {
       name: CARBONIQ_STORAGE_KEY,
