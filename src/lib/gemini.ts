@@ -1,9 +1,30 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { geminiFallback, SAFE_GEMINI_FALLBACK_MESSAGE } from "./geminiFallback";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const defaultAdvice = {
+  advice: [
+    { title: "Reduce Meat Consumption", description: "Try Meatless Mondays to lower your dietary footprint.", impact: "Medium", co2Saving: "0.5 tons" },
+    { title: "Switch to LED Bulbs", description: "Save energy by upgrading your home lighting.", impact: "Low", co2Saving: "0.1 tons" },
+    { title: "Use Public Transport", description: "Reducing car usage is the most effective way to lower emissions.", impact: "High", co2Saving: "1.2 tons" }
+  ],
+  motivation: "Every small action counts towards a greener planet!"
+};
 
-export const generateSustainabilityAdvice = async (userData: any) => {
+type SustainabilityUserData = {
+  score: number;
+  breakdown: {
+    transport: number;
+    energy: number;
+    diet: number;
+    shopping: number;
+  };
+};
+
+type ChatHistoryMessage = {
+  role: string;
+  content: string;
+};
+
+export const generateSustainabilityAdvice = async (userData: SustainabilityUserData) => {
   const prompt = `
     As a Sustainability Coach for CarbonIQ AI, analyze this user's carbon footprint and provide 3 actionable, personalized recommendations.
     
@@ -23,33 +44,17 @@ export const generateSustainabilityAdvice = async (userData: any) => {
     }
   `;
 
+  const text = await geminiFallback.generateContent(prompt);
+  if (text === SAFE_GEMINI_FALLBACK_MESSAGE) return defaultAdvice;
+
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    // Clean potential markdown code blocks
     const cleanedText = text.replace(/```json|```/g, "").trim();
     return JSON.parse(cleanedText);
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return {
-      advice: [
-        { title: "Reduce Meat Consumption", description: "Try Meatless Mondays to lower your dietary footprint.", impact: "Medium", co2Saving: "0.5 tons" },
-        { title: "Switch to LED Bulbs", description: "Save energy by upgrading your home lighting.", impact: "Low", co2Saving: "0.1 tons" },
-        { title: "Use Public Transport", description: "Reducing car usage is the most effective way to lower emissions.", impact: "High", co2Saving: "1.2 tons" }
-      ],
-      motivation: "Every small action counts towards a greener planet!"
-    };
+  } catch {
+    return defaultAdvice;
   }
 };
 
-export const chatWithCoach = async (message: string, history: any[]) => {
-  const chat = model.startChat({
-    history: history.map(h => ({
-      role: h.role,
-      parts: [{ text: h.content }]
-    })),
-  });
-
-  const result = await chat.sendMessage(message);
-  return result.response.text();
+export const chatWithCoach = async (message: string, history: ChatHistoryMessage[]) => {
+  return geminiFallback.sendChatMessage(message, history);
 };
