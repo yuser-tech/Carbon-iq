@@ -1,28 +1,31 @@
 /**
  * Carbon Emission Factors (Approximate tons of CO2 per unit per year)
  */
+
+import type { EmissionBreakdown } from '@/types';
+
 export const EMISSION_FACTORS = {
   TRANSPORT: {
-    CAR_PETROL: 0.2, // per 1000 km
+    CAR_PETROL: 0.2,
     CAR_EV: 0.05,
     BUS: 0.08,
-    FLIGHT_SHORT: 0.15, // per hour
+    FLIGHT_SHORT: 0.15,
     FLIGHT_LONG: 0.25,
   },
   ENERGY: {
-    ELECTRICITY_KWH: 0.0004, // per kWh
+    ELECTRICITY_KWH: 0.0004,
     GAS_UNIT: 0.002,
-    RENEWABLE_REDUCTION: 0.8, // 80% reduction if renewable
+    RENEWABLE_REDUCTION: 0.8,
   },
   DIET: {
-    MEAT_HEAVY: 3.3, // annual tons
+    MEAT_HEAVY: 3.3,
     MEAT_MEDIUM: 2.5,
     VEGETARIAN: 1.7,
     VEGAN: 1.5,
   },
   SHOPPING: {
-    NEW_CLOTHES: 0.015, // per item
-    ELECTRONICS: 0.1, // per gadget
+    NEW_CLOTHES: 0.015,
+    ELECTRONICS: 0.1,
   },
 };
 
@@ -44,6 +47,12 @@ export interface CalculatorInputs {
     monthlyClothes: number;
     annualGadgets: number;
   };
+}
+
+export interface HistoryEntry {
+  date: string;
+  score: number;
+  breakdown: EmissionBreakdown;
 }
 
 export const calculateTotalEmissions = (inputs: CalculatorInputs) => {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Circle, TrendingDown, Zap, Utensils, ShoppingBag, Car } from 'lucide-react';
+import { CheckCircle2, Circle, Zap, Utensils, ShoppingBag, Car } from 'lucide-react';
 import { useEcoStore } from '@/store/useEcoStore';
 import { ECO_ACTIONS, EcoAction } from '@/lib/actions';
 

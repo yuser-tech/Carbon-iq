@@ -40,7 +40,7 @@ export default function CalculatorPage() {
       onboarded: true,
       score: results.total,
       breakdown: results.breakdown,
-      history: [{ date: new Date().toISOString(), score: results.total }],
+      history: [{ date: new Date().toISOString(), score: results.total, breakdown: results.breakdown }],
     });
     router.push('/dashboard');
   };
@@ -75,12 +75,14 @@ export default function CalculatorPage() {
             exit={{ opacity: 0, x: -20 }}
             className="glass-card p-8 md:p-12"
           >
+            {steps[currentStep] && (
             <div className="flex items-center space-x-4 mb-8">
               <div className="p-3 bg-emerald/10 rounded-xl text-emerald">
                 {steps[currentStep].icon}
               </div>
               <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
             </div>
+            )}
 
             {currentStep === 0 && (
               <div className="space-y-6">
@@ -89,12 +91,13 @@ export default function CalculatorPage() {
                   <input 
                     type="range" min="0" max="50000" step="500"
                     value={inputs.transport.carDistance}
-                    onChange={(e) => setInputs({...inputs, transport: {...inputs.transport, carDistance: +e.target.value}})}
+                    onChange={(e) => setInputs({...inputs, transport: {...inputs.transport, carDistance: Number(e.target.value)}})}
                     className="w-full accent-emerald-green"
+                    aria-label="Annual car travel in kilometers"
                   />
                   <div className="flex justify-between text-sm mt-1">
                     <span>0 km</span>
-                    <span className="text-emerald font-bold">{inputs.transport.carDistance} km</span>
+                    <span className="text-emerald font-bold">{inputs.transport.carDistance.toLocaleString()} km</span>
                     <span>50,000 km</span>
                   </div>
                 </label>
@@ -121,8 +124,9 @@ export default function CalculatorPage() {
                   <input 
                     type="number"
                     value={inputs.energy.monthlyBill}
-                    onChange={(e) => setInputs({...inputs, energy: {...inputs.energy, monthlyBill: +e.target.value}})}
+                    onChange={(e) => setInputs({...inputs, energy: {...inputs.energy, monthlyBill: Number(e.target.value)}})}
                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xl focus:border-emerald/50 outline-none"
+                    aria-label="Monthly electricity bill in dollars"
                   />
                 </label>
                 <button
@@ -168,8 +172,9 @@ export default function CalculatorPage() {
                   <input 
                     type="number"
                     value={inputs.shopping.monthlyClothes}
-                    onChange={(e) => setInputs({...inputs, shopping: {...inputs.shopping, monthlyClothes: +e.target.value}})}
+                    onChange={(e) => setInputs({...inputs, shopping: {...inputs.shopping, monthlyClothes: Number(e.target.value)}})}
                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-emerald/50 outline-none"
+                    aria-label="Number of new clothes purchased per month"
                   />
                 </label>
                 <label className="block">
@@ -177,8 +182,9 @@ export default function CalculatorPage() {
                   <input 
                     type="number"
                     value={inputs.shopping.annualGadgets}
-                    onChange={(e) => setInputs({...inputs, shopping: {...inputs.shopping, annualGadgets: +e.target.value}})}
+                    onChange={(e) => setInputs({...inputs, shopping: {...inputs.shopping, annualGadgets: Number(e.target.value)}})}
                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:border-emerald/50 outline-none"
+                    aria-label="Number of new gadgets purchased per year"
                   />
                 </label>
               </div>
